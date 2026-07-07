@@ -26,6 +26,19 @@ Current count: 80 tests outside the Testcontainers-dependent classes, all passin
 locally; the Testcontainers-dependent tests compile and are designed to pass in CI
 (see Limitations).
 
+### Frontend (TypeScript)
+
+Vitest + React Testing Library, added when this repo adopted the orchestration engine
+(see `docs/SETUP.md`). 23 tests: pure-function coverage for `src/lib/validation.ts`,
+component tests for `ShortenPage` (client-side validation blocks the API call; the
+alias-fallback notice appears if and only if the returned `shortCode` differs from the
+request) and `StatsPage` (QR image renders/fails gracefully; analytics 404s
+independently of stats, per `docs/apiflow.md` Flow 3), and `DailyClicksChart`
+(zero-fills gaps in `dailyClickCounts`). API calls are mocked at the
+`src/api/client.ts` boundary (`vi.mock` with the real `ApiError` class preserved for
+`instanceof` checks) rather than hitting a real backend — no Docker/Testcontainers
+equivalent needed here since there's no database layer on this side.
+
 ### Orchestration engine (Python)
 
 19 `unittest` tests in `orchestrator/tests/`, deliberately testing real control-flow,
@@ -50,6 +63,21 @@ are inspected in `SCENARIOS.md` — this is the closest equivalent to an end-to-
 of the orchestration layer itself, since it exercises the real scheduler, real gates,
 real `git`/`mvnw` subprocess calls, and (for the ambiguous scenario) two real
 human-approval pause/resume cycles.
+
+## A real bug this repo's scenarios caught (and fixed)
+
+Running `frontend-custom-alias-1` for real (not narrative) surfaced a genuine gap in
+the engine itself, inherited unnoticed from the backend copy: `git diff <base_ref>`
+only compares paths already present in the index, so a file that was never `git
+add`-ed at all — a brand-new file, exactly what the `implementation` stage most needs
+to see — was invisible to every git-diff-based gate (`implementation`, `docs`,
+`compliance`). The 19-test `orchestrator/tests/` suite didn't catch this because its
+fixtures exercise control-flow, not real multi-file feature diffs. Fixed with `git add
+-N` (intent-to-add) at engine start (`orchestrator/engine.py`); see `SCENARIOS.md`
+section 4 for the full before/after. Worth calling out here specifically because it's
+the same class of finding as the backend's rollback/`JAVA_HOME` bugs — a real defect
+that only running the engine against a real change, rather than reasoning about it,
+would surface.
 
 ## Known limitations
 
