@@ -104,6 +104,7 @@ class Engine:
         self.approvals: set[str] = approvals or set()
         self._lock = Lock()
         self.base_ref = base_ref or self._git_sha()
+        self._mark_new_files_intent_to_add()
 
     # ---- persistence ----
 
@@ -268,6 +269,16 @@ class Engine:
                     result.add(s.name)
                     changed = True
         return result
+
+    def _mark_new_files_intent_to_add(self) -> None:
+        """`git diff <ref>` is blind to files that were never `git add`-ed at all -
+        it only ever compares paths that exist in the index (tracked or staged),
+        so a brand-new file sits invisibly outside every git-diff-based gate
+        (implementation/docs/compliance) until something stages it. `git add -N`
+        (intent-to-add) records the path in the index without staging its content,
+        which is exactly enough to make `git diff` see it as an addition - run once
+        per pipeline start so every downstream gate sees the real change set."""
+        subprocess.run(["git", "add", "-N", "--", "."], cwd=self.context.repo_root, check=False)
 
     def _git_sha(self) -> str | None:
         try:
