@@ -1,0 +1,84 @@
+{
+  "released_at": 1783453063.2687192,
+  "context": {
+    "requirements.artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-custom-alias\\requirements.md",
+    "requirements.output": {
+      "artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-custom-alias\\requirements.md"
+    },
+    "requirements.notes": "requirements artifact validated",
+    "design.artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-custom-alias\\design.md",
+    "design.output": {
+      "artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-custom-alias\\design.md"
+    },
+    "design.notes": "design artifact validated",
+    "implementation.changed_files": [
+      "README.md",
+      "docs/FRONTEND_INTEGRATION.md",
+      "orchestrator/artifacts/frontend-custom-alias/design.md",
+      "orchestrator/artifacts/frontend-custom-alias/release_manifest.json",
+      "orchestrator/artifacts/frontend-custom-alias/requirements.md",
+      "orchestrator/pipelines/frontend-custom-alias.json",
+      "src/api/types.ts",
+      "src/lib/validation.test.ts",
+      "src/lib/validation.ts",
+      "src/pages/ShortenPage.test.tsx",
+      "src/pages/ShortenPage.tsx",
+      "vite.config.ts"
+    ],
+    "implementation.output": {
+      "changed_files": [
+        "README.md",
+        "docs/FRONTEND_INTEGRATION.md",
+        "orchestrator/artifacts/frontend-custom-alias/design.md",
+        "orchestrator/artifacts/frontend-custom-alias/release_manifest.json",
+        "orchestrator/artifacts/frontend-custom-alias/requirements.md",
+        "orchestrator/pipelines/frontend-custom-alias.json",
+        "src/api/types.ts",
+        "src/lib/validation.test.ts",
+        "src/lib/validation.ts",
+        "src/pages/ShortenPage.test.tsx",
+        "src/pages/ShortenPage.tsx",
+        "vite.config.ts"
+      ]
+    },
+    "implementation.notes": "12 files changed",
+    "docs.changed_files": [
+      "README.md",
+      "docs/FRONTEND_INTEGRATION.md",
+      "orchestrator/artifacts/frontend-custom-alias/design.md",
+      "orchestrator/artifacts/frontend-custom-alias/release_manifest.json",
+      "orchestrator/artifacts/frontend-custom-alias/requirements.md",
+      "orchestrator/pipelines/frontend-custom-alias.json",
+      "src/api/types.ts",
+      "src/lib/validation.test.ts",
+      "src/lib/validation.ts",
+      "src/pages/ShortenPage.test.tsx",
+      "src/pages/ShortenPage.tsx",
+      "vite.config.ts"
+    ],
+    "docs.output": {
+      "changed_files": [
+        "README.md",
+        "docs/FRONTEND_INTEGRATION.md",
+        "orchestrator/artifacts/frontend-custom-alias/design.md",
+        "orchestrator/artifacts/frontend-custom-alias/release_manifest.json",
+        "orchestrator/artifacts/frontend-custom-alias/requirements.md",
+        "orchestrator/pipelines/frontend-custom-alias.json",
+        "src/api/types.ts",
+        "src/lib/validation.test.ts",
+        "src/lib/validation.ts",
+        "src/pages/ShortenPage.test.tsx",
+        "src/pages/ShortenPage.tsx",
+        "vite.config.ts"
+      ]
+    },
+    "docs.notes": "doc updates verified",
+    "test.exit_code": 0,
+    "test.output": {
+      "exit_code": 0
+    },
+    "test.notes": "tests passed",
+    "compliance.output": {},
+    "compliance.notes": "no secret patterns detected; no protected files touched; change touches 12 files, within bound of 15"
+  }
+}

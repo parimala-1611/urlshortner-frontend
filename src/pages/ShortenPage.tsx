@@ -4,11 +4,14 @@ import { ApiError, createShortUrl } from '../api/client';
 import type { ShortenResponse } from '../api/types';
 import { CopyButton } from '../components/CopyButton';
 import { useHistory } from '../hooks/useHistory';
+import { validateCustomAlias, validateUrl } from '../lib/validation';
 
 export function ShortenPage() {
   const [url, setUrl] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
+  const [customAlias, setCustomAlias] = useState('');
   const [result, setResult] = useState<ShortenResponse | null>(null);
+  const [requestedAlias, setRequestedAlias] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { entries, addEntry, removeEntry } = useHistory();
@@ -16,13 +19,24 @@ export function ShortenPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const urlError = validateUrl(url);
+    const aliasError = validateCustomAlias(customAlias);
+    if (urlError || aliasError) {
+      setError(urlError ?? aliasError);
+      return;
+    }
+
+    const trimmedAlias = customAlias.trim();
     setSubmitting(true);
     try {
       const response = await createShortUrl({
         url: url.trim(),
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
+        customAlias: trimmedAlias || null,
       });
       setResult(response);
+      setRequestedAlias(trimmedAlias || null);
       addEntry({
         shortCode: response.shortCode,
         shortUrl: response.shortUrl,
@@ -39,6 +53,8 @@ export function ShortenPage() {
       setSubmitting(false);
     }
   };
+
+  const aliasFellBack = requestedAlias != null && result != null && result.shortCode !== requestedAlias;
 
   return (
     <div className="space-y-10">
@@ -60,6 +76,20 @@ export function ShortenPage() {
               placeholder="https://example.com/some/long/path"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="customAlias" className="mb-1 block text-sm font-medium">
+              Custom alias <span className="font-normal text-slate-400">(optional, 6-12 letters/numbers)</span>
+            </label>
+            <input
+              id="customAlias"
+              type="text"
+              placeholder="mylink12"
+              value={customAlias}
+              onChange={(e) => setCustomAlias(e.target.value)}
               className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
             />
           </div>
@@ -94,6 +124,11 @@ export function ShortenPage() {
 
         {result && (
           <div className="mt-6 rounded-md border border-slate-200 p-4 dark:border-slate-800">
+            {aliasFellBack && (
+              <p className="mb-3 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                Your requested alias "{requestedAlias}" wasn't available — here's what you got instead.
+              </p>
+            )}
             <div className="flex items-center gap-2">
               <a
                 href={result.shortUrl}

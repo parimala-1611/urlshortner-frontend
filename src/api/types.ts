@@ -1,6 +1,7 @@
 export interface ShortenRequest {
   url: string;
   expiresAt?: string | null;
+  customAlias?: string | null;
 }
 
 export interface ShortenResponse {

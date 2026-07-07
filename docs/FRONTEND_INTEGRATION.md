@@ -107,7 +107,9 @@ Every non-2xx response is `{ "error": "<human-readable message>" }`. Branch on t
   taken, the backend does **not** return an error — it just falls back to a generated
   code. Always read `shortCode` from the response rather than assuming it equals what
   you sent, and consider showing the user "your requested alias wasn't available, here's
-  what you got instead" when they differ.
+  what you got instead" when they differ. ✅ Implemented in `ShortenPage` — see
+  `src/lib/validation.ts` for the client-side URL/alias validation and
+  `ShortenPage.tsx`'s fallback notice.
 - **Links are not permanent by default.** If you don't send `expiresAt`, the backend
   still assigns one (365 days by default) rather than "never expires" — and links are
   hard-deleted some time after they expire (90 days by default). If your product needs
