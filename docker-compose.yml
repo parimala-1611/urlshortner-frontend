@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    environment:
+      # Host running the Spring Boot backend (see ../docs/BACKEND.md). Defaults
+      # to host.docker.internal so it reaches a backend running on your host
+      # machine at localhost:8080 (works on Docker Desktop / Windows / Mac).
+      # If you containerize the backend too, point this at its service name
+      # instead, e.g. http://backend:8080.
+      BACKEND_ORIGIN: "http://host.docker.internal:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # Uncomment once the backend has its own Dockerfile, and switch
+  # BACKEND_ORIGIN above to http://backend:8080.
+  # backend:
+  #   build: ../urlshortner-backend
+  #   ports:
+  #     - "8080:8080"
