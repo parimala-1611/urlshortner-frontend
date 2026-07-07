@@ -23,3 +23,20 @@ export interface ShortUrlStatsResponse {
 export interface ErrorResponse {
   error: string;
 }
+
+export interface DailyClickCount {
+  date: string;
+  count: number;
+}
+
+export interface ReferrerCount {
+  referrer: string;
+  count: number;
+}
+
+export interface AnalyticsResponse {
+  shortCode: string;
+  totalClicks: number;
+  dailyClickCounts: DailyClickCount[];
+  topReferrers: ReferrerCount[];
+}

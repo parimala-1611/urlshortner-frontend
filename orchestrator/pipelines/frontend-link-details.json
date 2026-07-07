@@ -1,0 +1,66 @@
+{
+  "name": "frontend-link-details",
+  "description": "Frontend scenario: link details page - QR code and analytics, fetched independently (docs/apiflow.md Flow 3).",
+  "stages": [
+    {
+      "name": "requirements",
+      "runner": "orchestrator.stages.requirements.run",
+      "params": {
+        "artifact": "orchestrator/artifacts/frontend-link-details/requirements.md",
+        "ambiguous": false
+      }
+    },
+    {
+      "name": "design",
+      "runner": "orchestrator.stages.design.run",
+      "depends_on": ["requirements"],
+      "params": {"artifact": "orchestrator/artifacts/frontend-link-details/design.md"}
+    },
+    {
+      "name": "implementation",
+      "runner": "orchestrator.stages.implementation.run",
+      "depends_on": ["design"],
+      "rollback_on_failure": true,
+      "params": {
+        "expected_paths": [
+          "src/api/types.ts",
+          "src/api/client.ts",
+          "src/pages/StatsPage.tsx",
+          "src/components/DailyClicksChart.tsx"
+        ]
+      }
+    },
+    {
+      "name": "test",
+      "runner": "orchestrator.stages.test.run",
+      "depends_on": ["implementation"],
+      "max_retries": 1,
+      "rollback_on_failure": true,
+      "params": {}
+    },
+    {
+      "name": "docs",
+      "runner": "orchestrator.stages.docs.run",
+      "depends_on": ["implementation"],
+      "max_retries": 1,
+      "params": {
+        "expected_docs": ["docs/FRONTEND_INTEGRATION.md"]
+      }
+    },
+    {
+      "name": "compliance",
+      "runner": "orchestrator.stages.compliance.run",
+      "depends_on": ["test", "docs"],
+      "params": {
+        "max_files": 15
+      }
+    },
+    {
+      "name": "release_readiness",
+      "runner": "orchestrator.stages.release_readiness.run",
+      "depends_on": ["compliance"],
+      "requires_approval": true,
+      "params": {"manifest_path": "orchestrator/artifacts/frontend-link-details/release_manifest.json"}
+    }
+  ]
+}

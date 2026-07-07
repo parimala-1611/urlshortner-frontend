@@ -1,0 +1,76 @@
+{
+  "released_at": 1783453529.6876981,
+  "context": {
+    "requirements.artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-link-details\\requirements.md",
+    "requirements.output": {
+      "artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-link-details\\requirements.md"
+    },
+    "requirements.notes": "requirements artifact validated",
+    "design.artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-link-details\\design.md",
+    "design.output": {
+      "artifact": "C:\\Users\\nizam\\Workspace\\urlshortner-frontend\\orchestrator\\artifacts\\frontend-link-details\\design.md"
+    },
+    "design.notes": "design artifact validated",
+    "implementation.changed_files": [
+      "docs/FRONTEND_INTEGRATION.md",
+      "orchestrator/artifacts/frontend-link-details/design.md",
+      "orchestrator/artifacts/frontend-link-details/requirements.md",
+      "orchestrator/pipelines/frontend-link-details.json",
+      "src/api/client.ts",
+      "src/api/types.ts",
+      "src/components/DailyClicksChart.test.tsx",
+      "src/components/DailyClicksChart.tsx",
+      "src/pages/StatsPage.test.tsx",
+      "src/pages/StatsPage.tsx"
+    ],
+    "implementation.output": {
+      "changed_files": [
+        "docs/FRONTEND_INTEGRATION.md",
+        "orchestrator/artifacts/frontend-link-details/design.md",
+        "orchestrator/artifacts/frontend-link-details/requirements.md",
+        "orchestrator/pipelines/frontend-link-details.json",
+        "src/api/client.ts",
+        "src/api/types.ts",
+        "src/components/DailyClicksChart.test.tsx",
+        "src/components/DailyClicksChart.tsx",
+        "src/pages/StatsPage.test.tsx",
+        "src/pages/StatsPage.tsx"
+      ]
+    },
+    "implementation.notes": "10 files changed",
+    "docs.changed_files": [
+      "docs/FRONTEND_INTEGRATION.md",
+      "orchestrator/artifacts/frontend-link-details/design.md",
+      "orchestrator/artifacts/frontend-link-details/requirements.md",
+      "orchestrator/pipelines/frontend-link-details.json",
+      "src/api/client.ts",
+      "src/api/types.ts",
+      "src/components/DailyClicksChart.test.tsx",
+      "src/components/DailyClicksChart.tsx",
+      "src/pages/StatsPage.test.tsx",
+      "src/pages/StatsPage.tsx"
+    ],
+    "docs.output": {
+      "changed_files": [
+        "docs/FRONTEND_INTEGRATION.md",
+        "orchestrator/artifacts/frontend-link-details/design.md",
+        "orchestrator/artifacts/frontend-link-details/requirements.md",
+        "orchestrator/pipelines/frontend-link-details.json",
+        "src/api/client.ts",
+        "src/api/types.ts",
+        "src/components/DailyClicksChart.test.tsx",
+        "src/components/DailyClicksChart.tsx",
+        "src/pages/StatsPage.test.tsx",
+        "src/pages/StatsPage.tsx"
+      ]
+    },
+    "docs.notes": "doc updates verified",
+    "test.exit_code": 0,
+    "test.output": {
+      "exit_code": 0
+    },
+    "test.notes": "tests passed",
+    "compliance.output": {},
+    "compliance.notes": "no secret patterns detected; no protected files touched; change touches 10 files, within bound of 15"
+  }
+}

@@ -1,4 +1,4 @@
-import type { ErrorResponse, ShortenRequest, ShortenResponse, ShortUrlStatsResponse } from './types';
+import type { AnalyticsResponse, ErrorResponse, ShortenRequest, ShortenResponse, ShortUrlStatsResponse } from './types';
 
 // Empty string plays nicely with the Vite dev proxy (see vite.config.ts), which
 // forwards /api/* to the backend so the browser never makes a cross-origin request.
@@ -41,4 +41,14 @@ export function createShortUrl(payload: ShortenRequest): Promise<ShortenResponse
 
 export function getShortUrlStats(shortCode: string): Promise<ShortUrlStatsResponse> {
   return request<ShortUrlStatsResponse>(`/api/urls/${encodeURIComponent(shortCode)}`);
+}
+
+export function getAnalytics(shortCode: string): Promise<AnalyticsResponse> {
+  return request<AnalyticsResponse>(`/api/urls/${encodeURIComponent(shortCode)}/analytics`);
+}
+
+// The QR endpoint returns raw image/png bytes, not JSON - callers use this directly
+// as an <img src>, they don't fetch() it through the shared request() helper.
+export function getQrCodeUrl(shortCode: string): string {
+  return `${BASE_URL}/api/urls/${encodeURIComponent(shortCode)}/qr`;
 }

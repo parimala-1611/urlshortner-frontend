@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ApiError, getShortUrlStats } from '../api/client';
-import type { ShortUrlStatsResponse } from '../api/types';
+import { ApiError, getAnalytics, getQrCodeUrl, getShortUrlStats } from '../api/client';
+import type { AnalyticsResponse, ShortUrlStatsResponse } from '../api/types';
+import { DailyClicksChart } from '../components/DailyClicksChart';
 
 export function StatsPage() {
   const { shortCode: routeShortCode } = useParams();
@@ -11,13 +12,18 @@ export function StatsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const lookup = async (shortCode: string) => {
-    if (!shortCode.trim()) return;
+  const [viewingCode, setViewingCode] = useState<string | null>(null);
+  const [qrFailed, setQrFailed] = useState(false);
+  const [analytics, setAnalytics] = useState<AnalyticsResponse | null>(null);
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+
+  const lookupStats = async (shortCode: string) => {
     setLoading(true);
     setError(null);
     setStats(null);
     try {
-      const response = await getShortUrlStats(shortCode.trim());
+      const response = await getShortUrlStats(shortCode);
       setStats(response);
     } catch (err) {
       if (err instanceof ApiError && err.status === 404) {
@@ -32,10 +38,42 @@ export function StatsPage() {
     }
   };
 
+  const lookupAnalytics = async (shortCode: string) => {
+    setAnalyticsLoading(true);
+    setAnalyticsError(null);
+    setAnalytics(null);
+    try {
+      const response = await getAnalytics(shortCode);
+      setAnalytics(response);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        setAnalyticsError('No analytics available for that code.');
+      } else if (err instanceof ApiError) {
+        setAnalyticsError(err.message);
+      } else {
+        setAnalyticsError('Something went wrong loading analytics.');
+      }
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  // Stats, QR, and analytics are fetched independently (not Promise.all) per
+  // docs/apiflow.md Flow 3 - each endpoint 404s on its own, and one failing
+  // must not hide the other two.
+  const runLookups = (shortCode: string) => {
+    if (!shortCode.trim()) return;
+    const trimmed = shortCode.trim();
+    setViewingCode(trimmed);
+    setQrFailed(false);
+    void lookupStats(trimmed);
+    void lookupAnalytics(trimmed);
+  };
+
   useEffect(() => {
     if (routeShortCode) {
       setInput(routeShortCode);
-      void lookup(routeShortCode);
+      runLookups(routeShortCode);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [routeShortCode]);
@@ -100,6 +138,51 @@ export function StatsPage() {
             <dt>Clicks</dt>
             <dd>{stats.clickCount}</dd>
           </dl>
+        </div>
+      )}
+
+      {viewingCode && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-md border border-slate-200 p-4 dark:border-slate-800">
+            <h2 className="text-sm font-semibold">QR code</h2>
+            {qrFailed ? (
+              <p className="mt-2 text-sm text-slate-400">QR code unavailable for that code.</p>
+            ) : (
+              <img
+                src={getQrCodeUrl(viewingCode)}
+                alt={`QR code for ${viewingCode}`}
+                onError={() => setQrFailed(true)}
+                className="mt-3 h-32 w-32"
+              />
+            )}
+          </div>
+
+          <div className="rounded-md border border-slate-200 p-4 dark:border-slate-800">
+            <h2 className="text-sm font-semibold">Analytics</h2>
+            {analyticsLoading && <p className="mt-2 text-sm text-slate-400">Loading…</p>}
+            {analyticsError && <p className="mt-2 text-sm text-slate-400">{analyticsError}</p>}
+            {analytics && (
+              <div className="mt-3 space-y-4">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {analytics.totalClicks} total click{analytics.totalClicks === 1 ? '' : 's'}
+                </p>
+                <DailyClicksChart data={analytics.dailyClickCounts} />
+                {analytics.topReferrers.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400">Top referrers</h3>
+                    <ul className="mt-1 space-y-1 text-sm">
+                      {analytics.topReferrers.map((r) => (
+                        <li key={r.referrer} className="flex items-center justify-between gap-2">
+                          <span className="truncate text-slate-700 dark:text-slate-200">{r.referrer}</span>
+                          <span className="shrink-0 text-slate-400">{r.count}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

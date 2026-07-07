@@ -64,7 +64,10 @@ GET {baseUrl}/api/urls/{shortCode}
 ```
 → `200` with `{ shortCode, originalUrl, createdAt, expiresAt, clickCount }`, or `404`.
 This does **not** increment the click count and works even on expired links — safe to
-poll for a live click-count display.
+poll for a live click-count display. ✅ Implemented as the "link details" section of
+`StatsPage`, alongside the QR and analytics endpoints below (`getAnalytics`,
+`getQrCodeUrl` in `src/api/client.ts`), fetched independently per `docs/apiflow.md`
+Flow 3 so a 404 from one doesn't hide the other two.
 
 ### Follow / test a short link
 ```
