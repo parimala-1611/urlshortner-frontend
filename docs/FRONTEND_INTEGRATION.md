@@ -4,18 +4,27 @@ Everything a frontend needs: base URL, contract, error handling, and gotchas.
 Read [`BACKEND.md`](./BACKEND.md) for feature behavior and [`schemas.md`](./schemas.md)
 for exact field shapes first — this doc is the practical "how do I wire this up" layer.
 
-## 1. Before you start: CORS is not configured
+## 1. Before you start: enable CORS for your origin
 
-The backend has **no CORS configuration**. If your frontend dev server runs on a
+CORS is **disabled by default** (secure by default — no cross-origin browser requests
+are allowed until explicitly configured). If your frontend dev server runs on a
 different origin than the API (e.g. Vite on `localhost:5173`, CRA on `localhost:3000`,
-API on `localhost:8080`), browser requests will fail with a CORS error even though
-`curl`/Postman work fine.
+API on `localhost:8080`), you need the backend to allow your origin first, or requests
+will fail with a CORS error even though `curl`/Postman work fine.
 
-Options, in order of least effort:
-- Ask the backend owner to add a `WebMvcConfigurer` CORS mapping (or `@CrossOrigin`) for
-  your dev origin before you start integration.
-- Proxy API calls through your frontend dev server (e.g. Vite's `server.proxy`, CRA's
-  `"proxy"` field in `package.json`) so the browser only ever talks to one origin.
+Set `app.cors.allowed-origins` in `application.yml` (or via the
+`APP_CORS_ALLOWED-ORIGINS` environment variable) to a comma-separated list of origins,
+e.g.:
+
+```yaml
+app:
+  cors:
+    allowed-origins: "http://localhost:5173,http://localhost:3000"
+```
+
+Alternatively, proxy API calls through your frontend dev server (e.g. Vite's
+`server.proxy`, CRA's `"proxy"` field in `package.json`) so the browser only ever talks
+to one origin and CORS never comes into play.
 
 ## 2. Base URL
 
@@ -34,11 +43,20 @@ etc.) from day one so it's swappable for staging/prod later.
 POST {baseUrl}/api/urls
 Content-Type: application/json
 
-{ "url": "https://example.com/long/path" }
+{ "url": "https://example.com/long/path", "customAlias": "mylink12" }
 ```
+`customAlias` is optional (6-12 alphanumeric chars). `expiresAt` is also optional — if you
+don't send one, the backend assigns a default expiry automatically (see point 5 below).
+
 → `201` with `{ shortCode, shortUrl, originalUrl, createdAt, expiresAt }`. Use
 `shortUrl` directly as the display/copy value — don't reconstruct it from `shortCode`
-yourself, since the backend already resolves the host.
+yourself, since the backend already resolves the host. If you requested a `customAlias`,
+check the returned `shortCode` to confirm it was actually honored (see point 5).
+
+The `url` field must be a real `http`/`https` URL — the backend rejects non-web schemes,
+gibberish text, and filenames (e.g. `report.pdf`) with `400`. Validate this client-side too
+for instant feedback (e.g. a Zod schema mirroring: must parse as a URL, scheme is `http`/`https`,
+host isn't a known file extension) rather than relying solely on the server round-trip.
 
 ### Look up stats (for a "link details" view, click counters, dashboards)
 ```
@@ -85,23 +103,20 @@ Every non-2xx response is `{ "error": "<human-readable message>" }`. Branch on t
   the backend) if you want a history/dashboard view.
 - **No auth, no ownership.** Anyone with a `shortCode` can view its stats. Don't build
   a "my links" feature assuming per-user isolation exists — it doesn't yet.
+- **`customAlias` can silently fail to apply.** If the alias you requested is already
+  taken, the backend does **not** return an error — it just falls back to a generated
+  code. Always read `shortCode` from the response rather than assuming it equals what
+  you sent, and consider showing the user "your requested alias wasn't available, here's
+  what you got instead" when they differ.
+- **Links are not permanent by default.** If you don't send `expiresAt`, the backend
+  still assigns one (365 days by default) rather than "never expires" — and links are
+  hard-deleted some time after they expire (90 days by default). If your product needs
+  truly permanent links, you must explicitly send a far-future `expiresAt`.
 
 ## 6. Machine-readable contract
 
-[`../openapi.yml`](../openapi.yml) has the full OpenAPI 3.0 spec — feed it to
-`openapi-typescript`, `orval`, Swagger UI, Postman, or any codegen tool to generate
-typed request/response models instead of hand-writing them.
-
-## 7. Backend dependencies (for context only — not things you install)
-
-See [`../pom.xml`](../pom.xml) for exact versions. Listed here so a frontend dev knows
-what they're integrating with, e.g. when reading error messages or filing backend bugs:
-
-| Dependency | Role |
-|---|---|
-| Spring Boot Web | REST controllers, JSON serialization |
-| Spring Boot Data JPA + Hibernate | ORM (`ddl-auto: validate`, schema owned by Flyway) |
-| Spring Boot Validation | `@Valid` request body validation (blank-URL check) |
-| Flyway | Database schema migrations |
-| PostgreSQL driver | Database connectivity |
-| Testcontainers (test-only) | Integration tests against a real Postgres |
+The full OpenAPI 3.0 spec (`openapi.yml`) and dependency manifest (`pom.xml`) live in
+the backend repo (`UrlShortner`), not this one — pull them from there if you want to
+feed the spec to `openapi-typescript`, `orval`, Swagger UI, Postman, or any codegen tool
+instead of hand-writing request/response models, or want to see exact backend
+dependency versions when filing a backend bug.

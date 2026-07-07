@@ -1,0 +1,67 @@
+{
+  "name": "ambiguous-analytics",
+  "description": "Ambiguous scenario: 'add analytics' - vague input resolved via explicit assumptions, approved before implementation proceeds.",
+  "stages": [
+    {
+      "name": "requirements",
+      "runner": "orchestrator.stages.requirements.run",
+      "requires_approval": true,
+      "params": {
+        "artifact": "orchestrator/artifacts/ambiguous/requirements.md",
+        "ambiguous": true,
+        "_note": "requires_approval here (not just at release) is the key differentiator for this scenario: a human must sign off on the INTERPRETED SCOPE (daily counts + top referrers, no UI, no unique-visitor tracking) before any design/implementation work happens, since building the wrong interpretation of a vague requirement wastes real engineering effort."
+      }
+    },
+    {
+      "name": "design",
+      "runner": "orchestrator.stages.design.run",
+      "depends_on": ["requirements"],
+      "params": {"artifact": "orchestrator/artifacts/ambiguous/design.md"}
+    },
+    {
+      "name": "implementation",
+      "runner": "orchestrator.stages.implementation.run",
+      "depends_on": ["design"],
+      "rollback_on_failure": true,
+      "params": {
+        "expected_paths": [
+          "src/main/java/com/urlshortener/service/AnalyticsService.java",
+          "src/main/java/com/urlshortener/model/ClickEvent.java",
+          "src/main/resources/db/migration/V2__click_events.sql"
+        ]
+      }
+    },
+    {
+      "name": "test",
+      "runner": "orchestrator.stages.test.run",
+      "depends_on": ["implementation"],
+      "max_retries": 1,
+      "rollback_on_failure": true,
+      "params": {
+        "test_filter": "AnalyticsServiceTest,ShortUrlServiceTest,ShortUrlControllerTest"
+      }
+    },
+    {
+      "name": "docs",
+      "runner": "orchestrator.stages.docs.run",
+      "depends_on": ["implementation"],
+      "max_retries": 1,
+      "params": {
+        "expected_docs": ["docs/BACKEND.md", "docs/schemas.md", "openapi.yml"]
+      }
+    },
+    {
+      "name": "compliance",
+      "runner": "orchestrator.stages.compliance.run",
+      "depends_on": ["test", "docs"],
+      "params": {"max_files": 30}
+    },
+    {
+      "name": "release_readiness",
+      "runner": "orchestrator.stages.release_readiness.run",
+      "depends_on": ["compliance"],
+      "requires_approval": true,
+      "params": {"manifest_path": "orchestrator/artifacts/ambiguous/release_manifest.json"}
+    }
+  ]
+}

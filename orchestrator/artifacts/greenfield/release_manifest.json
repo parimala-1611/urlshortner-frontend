@@ -1,0 +1,92 @@
+{
+  "released_at": 1783447212.01116,
+  "context": {
+    "requirements.artifact": "C:\\Users\\nizam\\Workspace\\UrlShortner\\orchestrator\\artifacts\\greenfield\\requirements.md",
+    "requirements.output": {
+      "artifact": "C:\\Users\\nizam\\Workspace\\UrlShortner\\orchestrator\\artifacts\\greenfield\\requirements.md"
+    },
+    "requirements.notes": "requirements artifact validated",
+    "design.artifact": "C:\\Users\\nizam\\Workspace\\UrlShortner\\orchestrator\\artifacts\\greenfield\\design.md",
+    "design.output": {
+      "artifact": "C:\\Users\\nizam\\Workspace\\UrlShortner\\orchestrator\\artifacts\\greenfield\\design.md"
+    },
+    "design.notes": "design artifact validated",
+    "implementation.changed_files": [
+      ".gitignore",
+      "docs/BACKEND.md",
+      "docs/schemas.md",
+      "openapi.yml",
+      "orchestrator/artifacts/greenfield/design.md",
+      "orchestrator/artifacts/greenfield/requirements.md",
+      "orchestrator/engine.py",
+      "orchestrator/stages/test.py",
+      "orchestrator/tests/test_engine_approval.py",
+      "pom.xml",
+      "src/main/java/com/urlshortener/service/QrCodeService.java",
+      "src/main/java/com/urlshortener/web/ShortUrlController.java",
+      "src/test/java/com/urlshortener/service/QrCodeServiceTest.java",
+      "src/test/java/com/urlshortener/web/ShortUrlControllerTest.java"
+    ],
+    "implementation.output": {
+      "changed_files": [
+        ".gitignore",
+        "docs/BACKEND.md",
+        "docs/schemas.md",
+        "openapi.yml",
+        "orchestrator/artifacts/greenfield/design.md",
+        "orchestrator/artifacts/greenfield/requirements.md",
+        "orchestrator/engine.py",
+        "orchestrator/stages/test.py",
+        "orchestrator/tests/test_engine_approval.py",
+        "pom.xml",
+        "src/main/java/com/urlshortener/service/QrCodeService.java",
+        "src/main/java/com/urlshortener/web/ShortUrlController.java",
+        "src/test/java/com/urlshortener/service/QrCodeServiceTest.java",
+        "src/test/java/com/urlshortener/web/ShortUrlControllerTest.java"
+      ]
+    },
+    "implementation.notes": "14 files changed",
+    "docs.changed_files": [
+      ".gitignore",
+      "docs/BACKEND.md",
+      "docs/schemas.md",
+      "openapi.yml",
+      "orchestrator/artifacts/greenfield/design.md",
+      "orchestrator/artifacts/greenfield/requirements.md",
+      "orchestrator/engine.py",
+      "orchestrator/stages/test.py",
+      "orchestrator/tests/test_engine_approval.py",
+      "pom.xml",
+      "src/main/java/com/urlshortener/service/QrCodeService.java",
+      "src/main/java/com/urlshortener/web/ShortUrlController.java",
+      "src/test/java/com/urlshortener/service/QrCodeServiceTest.java",
+      "src/test/java/com/urlshortener/web/ShortUrlControllerTest.java"
+    ],
+    "docs.output": {
+      "changed_files": [
+        ".gitignore",
+        "docs/BACKEND.md",
+        "docs/schemas.md",
+        "openapi.yml",
+        "orchestrator/artifacts/greenfield/design.md",
+        "orchestrator/artifacts/greenfield/requirements.md",
+        "orchestrator/engine.py",
+        "orchestrator/stages/test.py",
+        "orchestrator/tests/test_engine_approval.py",
+        "pom.xml",
+        "src/main/java/com/urlshortener/service/QrCodeService.java",
+        "src/main/java/com/urlshortener/web/ShortUrlController.java",
+        "src/test/java/com/urlshortener/service/QrCodeServiceTest.java",
+        "src/test/java/com/urlshortener/web/ShortUrlControllerTest.java"
+      ]
+    },
+    "docs.notes": "doc updates verified",
+    "test.exit_code": 0,
+    "test.output": {
+      "exit_code": 0
+    },
+    "test.notes": "tests passed",
+    "compliance.output": {},
+    "compliance.notes": "no secret patterns detected; no protected files touched; change touches 14 files, within bound of 30"
+  }
+}

@@ -13,6 +13,11 @@ dist-ssr
 *.local
 .env
 
+# Orchestrator generated output (never let a rollback's git reset touch this)
+orchestrator/runs/
+__pycache__/
+*.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
